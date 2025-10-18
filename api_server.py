@@ -14,10 +14,10 @@ if not API_SECRET:
     raise RuntimeError("API_SECRET not found in .env")
 
 app = FastAPI(title="GitHub Automation API", version="1.0")
-
+from fastapi import BackgroundTasks
 
 @app.post("/run-task")
-async def run_task(request: Request):
+async def run_task(request: Request, background_tasks: BackgroundTasks):
     """Receive JSON, verify secret, pass to check.py, return repo info."""
     try:
         data = await request.json()
@@ -28,50 +28,51 @@ async def run_task(request: Request):
     if data.get("secret") != API_SECRET:
         raise HTTPException(status_code=403, detail="Unauthorized: invalid secret")
 
+    response_payload = {
+        "email": data["email"],
+        "task": data["task"],
+        "round": data["round"],
+        "nonce": data["nonce"],
+        "status": "Processing started"
+    }
+    background_tasks.add_task(process_and_notify, data)
+
+    # Return the same JSON to the API caller
+    return JSONResponse(content=response_payload, status_code=200)
+
+def process_and_notify(data):
     # Validate required fields
     for field in ["email", "task", "round", "nonce"]:
         if field not in data:
             raise HTTPException(status_code=400, detail=f"Missing field: {field}")
     # Extract evaluation URL
     evaluation_url = data.get("evaluation_url")
-    try:
+    
         # Call your check.py function directly
-        repo_url, commit_sha, site_url = run_check(data)
+    repo_url, commit_sha, site_url = run_check(data)
 
-        # Build the response JSON
-        response_payload = {
-            "email": data["email"],
-            "task": data["task"],
-            "round": data["round"],
-            "nonce": data["nonce"],
-            "repo_url": repo_url,
-            "commit_sha": commit_sha,
-            "pages_url": site_url
-        }
-
-        # Send response to evaluation_url if provided
-        if evaluation_url:
-            try:
-                eval_resp = requests.post(
-                    evaluation_url,
-                    json=response_payload,
-                    headers={"Content-Type": "application/json"},
-                    
-                )
-                print(f"✅ Sent results to evaluation_url: {evaluation_url} - Status {eval_resp.status_code}")
-            except Exception as e:
-                print(f"❌ Failed to notify evaluation_url: {e}")
-
-        # Return the same JSON to the API caller
-        return JSONResponse(content=response_payload, status_code=200)
-
-    except Exception as e:
-        # Even if run_check fails, you can return 200 with error details if desired
-        print("❌ Error running task:", e)
-        return JSONResponse(
-            content={"error": str(e), "message": "Failed to run task"},
-            status_code=200
-        )
+    # Build the response JSON
+    response_payload = {
+        "email": data["email"],
+        "task": data["task"],
+        "round": data["round"],
+        "nonce": data["nonce"],
+        "repo_url": repo_url,
+        "commit_sha": commit_sha,
+        "pages_url": site_url
+    }
+    print("✅ Task processed:", response_payload)
+    # Send response to evaluation_url if provided
+    if evaluation_url:
+        
+            eval_resp = requests.post(
+                evaluation_url,
+                json=response_payload,
+                headers={"Content-Type": "application/json"},
+                
+            )
+            print(f"✅ Sent results to evaluation_url: {evaluation_url} - Status {eval_resp.status_code}")
+            
 
 
 @app.get("/")
