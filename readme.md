@@ -45,7 +45,7 @@ GITHUB_TOKEN=your_github_personal_access_token
 GITHUB_USERNAME=your_github_username
 ```
 
-> 🧠 **Tip:** Your GitHub token must have repo and workflow permissions.
+> 🧠 **Tip:** You have to generate Personal Access Token(classic) and have to give repo and workflow permissions.
 
 ---
 ## 🧩 Local Setup
@@ -104,7 +104,7 @@ python test_api.py
 }
 ```
 
-**Response to caller**
+**Response with 200 to caller**
 ```json
 {
   "email": "student@example.com",
@@ -114,7 +114,7 @@ python test_api.py
   "status": "Processing started"
 }
 ```
-**Response to evaluation_url**
+**POST request to evaluation_url**
 ```json
 {
   "email": "student@example.com",
@@ -177,4 +177,5 @@ This project is licensed under the [MIT License](LICENSE).
 uvicorn api_server:app --port 5000
 
 cloudflared tunnel --url http://127.0.0.1:5000
+
 
