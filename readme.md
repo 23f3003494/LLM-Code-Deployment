@@ -104,7 +104,7 @@ python test_api.py
 }
 ```
 
-**Response**
+**Response to caller**
 ```json
 {
   "email": "student@example.com",
@@ -114,7 +114,18 @@ python test_api.py
   "status": "Processing started"
 }
 ```
-
+**Response to evaluation_url**
+```json
+{
+  "email": "student@example.com",
+  "task": "captcha-solver-001",
+  "round": 1,
+  "nonce": "xyz-123",
+  "repo_url": created_repo_url,
+  "commit_sha": commit_sha,
+  "pages_url": static_site_url
+}
+```
 ---
 
 ## 🧱 How It Works (Pipeline)
@@ -166,3 +177,4 @@ This project is licensed under the [MIT License](LICENSE).
 uvicorn api_server:app --port 5000
 
 cloudflared tunnel --url http://127.0.0.1:5000
+
