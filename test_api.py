@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = "https://configurations-controversial-hello-fiber.trycloudflare.com"
+BASE_URL = "http://127.0.0.1:5000"
 API_SECRET = os.getenv("API_SECRET")
 
 # -------------------------
@@ -97,4 +97,5 @@ if __name__ == "__main__":
         print("❌ ERROR: Could not connect to FastAPI server. Make sure it's running at", BASE_URL)
     except Exception as e:
         print("❌ ERROR:", str(e))
+
 
