@@ -7,7 +7,7 @@ It automates:
 2. Saving round-based assets and updates.
 3. Creating/pushing to GitHub repositories.
 4. Enabling GitHub Pages hosting automatically.
-5. Optionally notifying an evaluation endpoint.
+5. Notifying an evaluation endpoint.
 
 ---
 
@@ -177,6 +177,7 @@ This project is licensed under the [MIT License](LICENSE).
 uvicorn api_server:app --port 5000
 
 cloudflared tunnel --url http://127.0.0.1:5000
+
 
 
 
