@@ -1,6 +1,6 @@
 # 🚀 LLM Code Deployment – FastAPI + GitHub Automation
 
-This project provides a **FastAPI-based automation API** that takes JSON input to **generate, update, and deploy static web applications to GitHub Pages** using **GitHub Copilot CLI**.
+This project provides a **FastAPI-based automation API** that takes JSON input to **generate, update, and deploy static web applications to GitHub Pages** using **GitHub Copilot CLI for generating code for static web application** and **github REST APIs** for handling push, commit, repo creation and publishing pages.
 
 It automates:
 1. Generating code using GitHub Copilot CLI.
@@ -177,5 +177,6 @@ This project is licensed under the [MIT License](LICENSE).
 uvicorn api_server:app --port 5000
 
 cloudflared tunnel --url http://127.0.0.1:5000
+
 
 
